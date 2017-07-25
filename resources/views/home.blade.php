@@ -12,7 +12,7 @@
 
     @if (session('error'))
       @component('components.alert')
-        @slot('errorCode') 403 @endslot
+        @slot('errorCode') {{ session('code', 403) }} @endslot
         {{ session('error') }}
       @endcomponent
     @endif

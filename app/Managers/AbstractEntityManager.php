@@ -35,6 +35,14 @@ abstract class AbstractEntityManager implements EntityManager, CriteriaInterface
     /**
      * @inheritdoc
      */
+    public function isExists($id): bool
+    {
+        return $this->entity->find($id, ['id']) !== null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function findAll(array $columns = ['*']): Collection
     {
         return $this->entity->get($columns);

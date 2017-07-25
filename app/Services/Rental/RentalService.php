@@ -2,21 +2,13 @@
 namespace App\Services\Rental;
 
 use Carbon\Carbon;
-use App\Entity\{Car, User};
-use App\Managers\Contracts\{
-    RentalManager,
-    LocationManager
+use App\Services\Rental\{
+    Traits\RentalBase,
+    Contracts\RentalService as RentalServiceContract
 };
-use App\Managers\Eloquent\Criteria\{
-    EagerLoad,
-    WhereIsOrNotNull
-};
-use App\Services\Rental\Exceptions\{
-    UserNotReturnedCar,
-    CarHasAlreadyRented
-};
+use App\Managers\Eloquent\Criteria\WhereIsOrNotNull;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Services\Rental\Contracts\RentalService as RentalServiceContract;
+use App\Services\Rental\Exceptions\User\UserHasRentedCar;
 
 /**
  * Class RentalService
@@ -24,86 +16,64 @@ use App\Services\Rental\Contracts\RentalService as RentalServiceContract;
  */
 class RentalService implements RentalServiceContract
 {
-    /**
-     * @var \App\Managers\Contracts\RentalManager
-     */
-    protected $rentals;
-    /**
-     * @var \App\Managers\Contracts\LocationManager
-     */
-    protected $locations;
-    /**
-     * @var float
-     */
-    protected $price;
+    use RentalBase;
 
     /**
-     * @param \App\Managers\Contracts\RentalManager $rentals
-     * @param \App\Managers\Contracts\LocationManager $locations
+     * @inheritdoc
      */
-    public function __construct(RentalManager $rentals, LocationManager $locations)
+    public function rent(int $userId, int $carId, array $properties): bool
     {
-        $this->rentals = $rentals;
-        $this->locations = $locations;
-        $this->price = env('RENTAL_PRICE');
-    }
-
-    /**
-     * Checks if the current user can rent the car.
-     *
-     * @param \App\Entity\User $user
-     *
-     * @return $this
-     * @throws UserNotReturnedCar exception
-     */
-    public function checkUser(User $user): self
-    {
-        try {
-            $rental = $this->rentals
-                ->withCriteria(new WhereIsOrNotNull('returned_at'))
-                ->findWhereFirst('user_id', $user->id);
-
-            throw new UserNotReturnedCar($rental->toArray());
-
-        } catch (ModelNotFoundException $e) {
-            return $this;
-        }
-    }
-
-    /**
-     * Checks whether the car is rented or not.
-     *
-     * @param int $carId
-     *
-     * @return $this
-     * @throws CarHasAlreadyRented exception
-     */
-    public function checkCar(int $carId): self
-    {
-        try {
-            $rental = $this->rentals
-                ->withCriteria([new WhereIsOrNotNull('returned_at')])
-                ->findWhereFirst('car_id', '=', $carId);
-
-            throw new CarHasAlreadyRented($rental->toArray());
-
-        } catch (ModelNotFoundException $e) {
-            return $this;
-        }
+        return $this->validate($userId, $carId)
+            ->rentCar($properties);
     }
 
     /**
      * @inheritdoc
      */
-    public function rent(User $user, array $properties): void
+    public function validate(int $userId, int $carId): RentalServiceContract
+    {
+        return $this->isUserExists($userId)
+            ->isCarExists($carId)
+            ->isCarRented(true)
+            ->isUserHasRentedCar();
+    }
+
+    /**
+     * Checks, if the current user has adlready rented the car.
+     *
+     * @return $this
+     * @throws \App\Services\Rental\Exceptions\User\UserHasRentedCar
+     */
+    private function isUserHasRentedCar(): self
+    {
+        try {
+            $rental = $this->rentals
+                ->withCriteria(new WhereIsOrNotNull('returned_at'))
+                ->findWhereFirst('user_id', $this->userId);
+
+            throw new UserHasRentedCar($rental->car_id);
+
+        } catch (ModelNotFoundException $e) {
+            return $this;
+        }
+    }
+
+    /**
+     * Creates the car rental for the current user.
+     *
+     * @param array $properties
+     * @return bool
+     */
+    private function rentCar(array $properties): bool
     {
         if (empty($properties['returned_to'])) {
             $properties['returned_to'] = $properties['rented_from'];
         }
-        $properties['user_id'] = $user->id;
-        $properties['rented_at'] = Carbon::now()->toDateTimeString();
+        $properties['user_id'] = $this->userId;
+        $properties['car_id'] = $this->carId;
         $properties['price'] = $this->price;
+        $properties['rented_at'] = Carbon::now()->toDateTimeString();
 
-        $this->rentals->create($properties);
+        return $this->rentals->create($properties) !== null;
     }
 }

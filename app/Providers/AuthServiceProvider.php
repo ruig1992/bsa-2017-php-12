@@ -35,6 +35,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::resource('cars', CarPolicy::class);
 
         Gate::define('cars.rent.store', CarRentalPolicy::class . '@rentCar');
-        Gate::define('cars.rent.return', CarRentalPolicy::class . '@rentReturn');
+        Gate::define('cars.rent.return', CarRentalPolicy::class . '@returnCar');
     }
 }

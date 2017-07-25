@@ -24,7 +24,6 @@
 
   <body>
     <div id="app" class="main-wrapper">
-      {{-- <nav class="navbar navbar-default navbar-static-top"> --}}
       <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
         <!-- Collapsed Hamburger -->
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

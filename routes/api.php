@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
     Route::get('cars', 'Api\CarController@index');
     Route::get('cars/{id}', 'Api\CarController@show');
 
+    Route::post('cars/{id}/rent', 'Api\CarRentalController@rentCar');
+    Route::post('cars/{id}/return', 'Api\CarRentalController@returnCar');
+
     Route::resource('admin/cars', 'Api\Admin\AdminCarController', [
         'except' => ['create', 'edit']
     ]);

@@ -2,21 +2,20 @@
 namespace App\Services\Rental\Contracts;
 
 /**
- * Interface RentalService
+ * Interface ReturnService
  * @package App\Services\Rental\Contracts
  */
-interface RentalService
+interface ReturnService
 {
     /**
-     * Car rent for current user.
+     * Returns the car from the user rent and close the rental.
      *
      * @param int $userId
      * @param int $carId
-     * @param array $properties
      *
      * @return bool
      */
-    public function rent(int $userId, int $carId, array $properties): bool;
+    public function returnFromRent(int $userId, int $carId): bool;
 
     /**
      * Validates the input parameters.

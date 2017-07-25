@@ -31,7 +31,7 @@ class CreateRentalsTable extends Migration
 
             $table->foreign('car_id')
                 ->references('id')
-                ->on('users')
+                ->on('cars')
                 ->onDelete('CASCADE');
 
             $table->foreign('user_id')

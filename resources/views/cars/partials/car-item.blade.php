@@ -68,17 +68,20 @@
 
   @if ($vMode === 'show')
     <div class="cart-footer">
+      @can('cars.rent.store', [$car['id'], true])
       <a href="{{ route('cars.rent', ['id' => $car['id']]) }}"
         class="btn btn-primary rent-button">
           <i class="fa fa-arrow-right mr-1" aria-hidden="true"></i> Rent</a>
+      @endcan
 
+      @can('cars.rent.return', [$car['id'], true])
       <button type="submit" class="btn btn-warning rent-return-button" form="rent-return-form">
       <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i> Return from Rent</button>
 
-      <form id="rent-return-form" action="{{ route('cars.rent.return') }}"
+      <form id="rent-return-form" action="{{ route('cars.rent.return', ['id' => $car['id']]) }}"
         method="POST" style="display:none">
           {{ csrf_field() }}</form>
-      </div>
+      @endcan
     </div>
   @endif
 </div>

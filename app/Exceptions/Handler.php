@@ -4,6 +4,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
+use App\Services\Rental\Exceptions\RentalException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\RelationNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -65,11 +66,24 @@ class Handler extends ExceptionHandler
                 ], 404);
             }
 
+            if ($exception instanceof RentalException) {
+                return response()->json([
+                    'error' => $exception->getMessage(),
+                ], $exception->getCode());
+            }
+
             if ($exception instanceof RelationNotFoundException) {
                 return response()->json([
                     'error' => $exception->getMessage(),
                 ], 400);
             }
+        }
+
+        if ($exception instanceof RentalException) {
+            return redirect()
+                ->route('app.index')
+                ->with('error', $exception->getMessage())
+                ->with('code', $exception->getCode());
         }
 
         if ($exception instanceof AuthorizationException) {

@@ -8,6 +8,15 @@ namespace App\Managers\Contracts;
 interface EntityManager
 {
     /**
+     * Checks, is the Entity with the id exist.
+     *
+     * @param mixed $id
+     *
+     * @return bool
+     */
+    public function isExists($id): bool;
+
+    /**
      * Finds all entities.
      *
      * @param  array $columns
