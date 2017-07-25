@@ -23,8 +23,8 @@ class Rental extends Model
      */
     protected $fillable = [
         'id',
-        'car_id',
         'user_id',
+        'car_id',
         'rented_from',
         'returned_to',
         'rented_at',

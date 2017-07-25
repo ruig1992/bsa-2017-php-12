@@ -15,6 +15,9 @@ use App\Http\Requests\{
     StoreCarRental
 };
 use App\Jobs\SendNotificationEmail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use App\Services\Rental\Contracts\RentalService;
 use App\Traits\Jobs\DispatchCarStoredNotification;
 
 /**
@@ -37,20 +40,27 @@ class CarController extends Controller
      * @var \App\Managers\Contracts\LocationManager
      */
     protected $locations;
+    /**
+     * @var \App\Services\Rental\Contracts\RentalService
+     */
+    protected $rentalService;
 
     /**
      * @param \App\Managers\Contracts\CarManager $cars
      * @param \App\Managers\Contracts\UserManager $users
      * @param \App\Managers\Contracts\LocationManager $locations
+     * @param \App\Services\Rental\Contracts\RentalService $rentalService
      */
     public function __construct(
         CarManager $cars,
         UserManager $users,
-        LocationManager $locations
+        LocationManager $locations,
+        RentalService $rentalService
     ) {
         $this->cars = $cars;
         $this->users = $users;
         $this->locations = $locations;
+        $this->rentalService = $rentalService;
 
         $this->middleware('auth');
         $this->middleware('can:cars.create')->only(['create', 'store']);
@@ -192,11 +202,13 @@ class CarController extends Controller
     public function rent(int $id)
     {
         $car = $this->cars->find($id);
+        $this->authorize('cars.rent.store', $car->id);
+
         $locations = $this->locations->findAll();
 
         return view('cars.rent', [
-            'car' => $car,
-            'locations' => $locations,
+            'car' => $car->toArray(),
+            'locations' => $locations->toArray(),
         ]);
     }
 
@@ -206,24 +218,28 @@ class CarController extends Controller
      * @param \App\Http\Requests\StoreCarRental $request
      *    Contains the rules for validating the car rental data from form request
      *
-     * @param  int $id The car id
-     *
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function storeRent(StoreCarRental $request, int $id)
+    public function storeRent(StoreCarRental $request)
     {
-        $rental = $request->only([
-            'rented_from',
-            'returned_to',
-        ]);
+        $this->authorize('cars.rent.store', $request->car_id);
 
-        //dd($rental);
+        $this->rentalService->rent(
+            Auth::user(),
+            $request->only([
+                'car_id',
+                'rented_from',
+                'returned_to',
+            ])
+        );
 
-        return redirect()->route('cars.show', ['id' => $id]);
+        return redirect()->route('cars.show', ['id' => $request->car_id]);
     }
 
     public function returnFromRent()
     {
-        return 'returnFromRent';
+        $this->rentalService->closeRent(Auth::user());
+
+        return redirect()->route('cars.index');
     }
 }

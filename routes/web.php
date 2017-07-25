@@ -18,7 +18,7 @@ Route::get('/', 'HomeController@index')->name('app.index');
 Route::resource('cars', 'CarController');
 
 Route::get('cars/rent/{id}', 'CarController@rent')->name('cars.rent');
-Route::post('cars/rent/{id}', 'CarController@storeRent')->name('cars.rent.store');
+Route::post('cars/rent', 'CarController@storeRent')->name('cars.rent.store');
 Route::post('cars/return', 'CarController@returnFromRent')->name('cars.rent.return');
 
 Route::get('/auth/{provider}', 'Auth\SocialAuthController@redirectToProvider');

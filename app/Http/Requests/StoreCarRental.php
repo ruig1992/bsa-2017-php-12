@@ -27,6 +27,7 @@ class StoreCarRental extends FormRequest
     public function rules(): array
     {
         return [
+            'car_id' => 'bail|required|integer|exists:cars,id',
             'rented_from' => 'bail|required|integer|exists:locations,id',
             'returned_to' => 'bail|integer|exists:locations,id',
         ];
@@ -41,8 +42,10 @@ class StoreCarRental extends FormRequest
     {
         return [
             'rented_from.required' => 'This location must be selected.',
-            '*.integer' => 'The selected location has an invalid type.',
-            '*.exists' => 'The selected location does not exist.',
+            'rented_from.integer' => 'The selected location has an invalid type.',
+            'rented_from.exists' => 'The selected location does not exist.',
+            'returned_to.integer' => 'The selected location has an invalid type.',
+            'returned_to.exists' => 'The selected location does not exist.',
         ];
     }
 }

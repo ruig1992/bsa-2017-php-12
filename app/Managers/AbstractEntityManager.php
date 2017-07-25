@@ -6,6 +6,7 @@ use App\Managers\Contracts\{
     Criteria\CriteriaInterface
 };
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -46,13 +47,7 @@ abstract class AbstractEntityManager implements EntityManager, CriteriaInterface
     {
         $model = $this->entity->find($id, $columns);
 
-        if ($model === null) {
-            throw (new ModelNotFoundException)->setModel(
-                get_class($this->entity->getModel()), $id
-            );
-        }
-
-        return $model;
+        return $this->checkModelExists($model);
     }
 
     /**
@@ -60,7 +55,7 @@ abstract class AbstractEntityManager implements EntityManager, CriteriaInterface
      */
     public function findWhere(
         $column,
-        string $operator = null,
+        $operator = null,
         $value = null,
         string $boolean = 'and'
     ): Collection {
@@ -74,7 +69,7 @@ abstract class AbstractEntityManager implements EntityManager, CriteriaInterface
      */
     public function findWhereFirst(
         $column,
-        string $operator = null,
+        $operator = null,
         $value = null,
         string $boolean = 'and'
     ) {
@@ -82,13 +77,7 @@ abstract class AbstractEntityManager implements EntityManager, CriteriaInterface
             ->where($column, $operator, $value, $boolean)
             ->first();
 
-        if ($model === null) {
-            throw (new ModelNotFoundException)->setModel(
-                get_class($this->entity->getModel())
-            );
-        }
-
-        return $model;
+        return $this->checkModelExists($model);
     }
 
     /**
@@ -154,5 +143,25 @@ abstract class AbstractEntityManager implements EntityManager, CriteriaInterface
     protected function makeEntity()
     {
         return app()->make($this->entity());
+    }
+
+    /**
+     * Checks if the Eloquent model is exists.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @return \Illuminate\Database\Eloquent\Model
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    protected function checkModelExists(?Model $model): Model
+    {
+        if ($model === null) {
+            $this->entity = $this->entity->getModel();
+
+            throw (new ModelNotFoundException)->setModel(
+                get_class($this->entity->getModel())
+            );
+        }
+        return $model;
     }
 }

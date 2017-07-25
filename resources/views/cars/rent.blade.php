@@ -11,8 +11,9 @@
     @endcomponent
 
     <div class="container">
-      <form method="POST" action="{{ route('cars.rent.store', ['id' => $car['id']]) }}">
+      <form method="POST" action="{{ route('cars.rent.store') }}">
         {{ csrf_field() }}
+        <input type="hidden" name="car_id" value="{{ $car['id'] }}">
 
         <div class="form-group row{{ $errors->has('rented_from') ? ' has-danger' : '' }}">
           <label for="rented_from" class="form-control-label col-md-3 col-form-label">
@@ -25,9 +26,9 @@
                 <option>__ select the location FROM __</option>
 
               @foreach ($locations as $location)
-                <option value="{{ $location->id }}"
-                  @if (old('rented_from') == $location->id) selected @endif>
-                  {{ $location->name }}
+                <option value="{{ $location['id'] }}"
+                  @if (old('rented_from') == $location['id']) selected @endif>
+                  {{ $location['name'] }}
                 </option>
               @endforeach
             </select>
@@ -49,9 +50,9 @@
                 <option disabled selected>__ select the location TO __</option>
 
               @foreach ($locations as $location)
-                <option value="{{ $location->id }}"
-                  @if (old('returned_to') == $location->id) selected @endif>
-                  {{ $location->name }}
+                <option value="{{ $location['id'] }}"
+                  @if (old('returned_to') == $location['id']) selected @endif>
+                  {{ $location['name'] }}
                 </option>
               @endforeach
             </select>

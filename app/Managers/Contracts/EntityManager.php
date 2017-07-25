@@ -37,7 +37,7 @@ interface EntityManager
      */
     public function findWhere(
         $column,
-        string $operator = null,
+        $operator = null,
         $value = null,
         string $boolean = 'and'
     );
@@ -54,7 +54,7 @@ interface EntityManager
      */
     public function findWhereFirst(
         $column,
-        string $operator = null,
+        $operator = null,
         $value = null,
         string $boolean = 'and'
     );

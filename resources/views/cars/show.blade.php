@@ -10,6 +10,13 @@
       @slot('icon') fa-car @endslot
     @endcomponent
 
+    @if (session('error'))
+      @component('components.alert')
+        @slot('errorCode') 403 @endslot
+        {{ session('error') }}
+      @endcomponent
+    @endif
+
     @include('cars.partials.car-item', ['vMode' => 'show'])
   </article>
 

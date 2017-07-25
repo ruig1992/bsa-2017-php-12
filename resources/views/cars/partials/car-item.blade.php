@@ -16,7 +16,7 @@
 
     @if ($vMode === 'show')
     <div class="d-flex flex-wrap justify-content-end mt-3 mt-sm-0">
-      {{-- @can('cars.update') --}}
+      @can('cars.update')
       <div class="p-1">
         <a href="{{ route('cars.edit', ['id' => $car['id']]) }}"
           class="btn btn-success edit-button">
@@ -24,9 +24,9 @@
             <span class="sr-only ml-1">Edit</span>
         </a>
       </div>
-      {{-- @endcan --}}
+      @endcan
 
-      {{-- @can('cars.delete') --}}
+      @can('cars.delete')
       <div class="p-1">
         <button type="submit" class="btn btn-danger delete-button" form="delete-form">
           <i class="fa fa-trash-o fa-lg" aria-hidden="true"></i>
@@ -38,7 +38,7 @@
             {{ method_field('DELETE') }}
             {{ csrf_field() }}</form>
       </div>
-      {{-- @endcan --}}
+      @endcan
     </div>
 
     @endif

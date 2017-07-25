@@ -1,7 +1,10 @@
 <?php
 namespace App\Providers;
 
-use App\Policies\CarPolicy;
+use App\Policies\{
+    CarPolicy,
+    CarRentalPolicy
+};
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -30,5 +33,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::resource('cars', CarPolicy::class);
+
+        Gate::define('cars.rent.store', CarRentalPolicy::class . '@rentCar');
+        Gate::define('cars.rent.return', CarRentalPolicy::class . '@rentReturn');
     }
 }
