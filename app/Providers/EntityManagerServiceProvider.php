@@ -3,11 +3,13 @@ namespace App\Providers;
 
 use App\Managers\Contracts\{
     CarManager as CarManagerContract,
-    UserManager as UserManagerContract
+    UserManager as UserManagerContract,
+    LocationManager as LocationManagerContract
 };
 use App\Managers\Eloquent\{
     CarManager,
-    UserManager
+    UserManager,
+    LocationManager
 };
 use Illuminate\Support\ServiceProvider;
 
@@ -34,7 +36,8 @@ class EntityManagerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(UserManagerContract::class, UserManager::class);
         $this->app->bind(CarManagerContract::class, CarManager::class);
+        $this->app->bind(UserManagerContract::class, UserManager::class);
+        $this->app->bind(LocationManagerContract::class, LocationManager::class);
     }
 }
