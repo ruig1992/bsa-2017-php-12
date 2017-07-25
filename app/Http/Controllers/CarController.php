@@ -10,7 +10,10 @@ use App\Managers\Eloquent\Criteria\{
     Latest,
     EagerLoad
 };
-use App\Http\Requests\StoreCar;
+use App\Http\Requests\{
+    StoreCar,
+    StoreCarRental
+};
 use App\Jobs\SendNotificationEmail;
 use App\Traits\Jobs\DispatchCarStoredNotification;
 
@@ -179,6 +182,13 @@ class CarController extends Controller
         return redirect()->route('cars.index');
     }
 
+    /**
+     * Shows the form for rent the car by its id.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function rent(int $id)
     {
         $car = $this->cars->find($id);
@@ -190,9 +200,26 @@ class CarController extends Controller
         ]);
     }
 
-    public function storeRent()
+    /**
+     * Store the car rental data.
+     *
+     * @param \App\Http\Requests\StoreCarRental $request
+     *    Contains the rules for validating the car rental data from form request
+     *
+     * @param  int $id The car id
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function storeRent(StoreCarRental $request, int $id)
     {
-        return 'storeRent';
+        $rental = $request->only([
+            'rented_from',
+            'returned_to',
+        ]);
+
+        //dd($rental);
+
+        return redirect()->route('cars.show', ['id' => $id]);
     }
 
     public function returnFromRent()

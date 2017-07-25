@@ -11,9 +11,8 @@
     @endcomponent
 
     <div class="container">
-      <form method="POST" action="{{ route('cars.rent.store') }}">
+      <form method="POST" action="{{ route('cars.rent.store', ['id' => $car['id']]) }}">
         {{ csrf_field() }}
-        <input type="hidden" name="car_id" value="{{ $car['id'] }}">
 
         <div class="form-group row{{ $errors->has('rented_from') ? ' has-danger' : '' }}">
           <label for="rented_from" class="form-control-label col-md-3 col-form-label">
@@ -47,7 +46,7 @@
             <select id="returned_to" class="form-control{{ $errors->has('returned_to') ?
               ' form-control-danger' : '' }}" name="returned_to">
 
-                <option>__ select the location TO __</option>
+                <option disabled selected>__ select the location TO __</option>
 
               @foreach ($locations as $location)
                 <option value="{{ $location->id }}"
