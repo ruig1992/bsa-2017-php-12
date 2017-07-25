@@ -36,3 +36,9 @@ $factory->define(App\Entity\Car::class, function (Faker\Generator $faker) {
         'user_id' => 1,
     ];
 });
+
+$factory->define(App\Entity\Location::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->address,
+    ];
+});

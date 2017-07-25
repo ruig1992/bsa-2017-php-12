@@ -68,7 +68,7 @@ class User extends Authenticatable implements AuthenticatableInterface
     }
 
     /**
-     * Get the cars for the user.
+     * Get cars for the user.
      */
     public function cars()
     {

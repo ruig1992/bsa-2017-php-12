@@ -41,7 +41,7 @@ class Car extends Model
     ];
 
     /**
-     * Get the user that owns the car.
+     * Get the user who owns the car.
      */
     public function user()
     {
