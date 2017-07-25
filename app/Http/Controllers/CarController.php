@@ -3,7 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Managers\Contracts\{
     CarManager,
-    UserManager
+    UserManager,
+    LocationManager
 };
 use App\Managers\Eloquent\Criteria\{
     Latest,
@@ -11,7 +12,6 @@ use App\Managers\Eloquent\Criteria\{
 };
 use App\Http\Requests\StoreCar;
 use App\Jobs\SendNotificationEmail;
-use Illuminate\Support\Facades\Gate;
 use App\Traits\Jobs\DispatchCarStoredNotification;
 
 /**
@@ -30,15 +30,24 @@ class CarController extends Controller
      * @var \App\Managers\Contracts\UserManager
      */
     protected $users;
+    /**
+     * @var \App\Managers\Contracts\LocationManager
+     */
+    protected $locations;
 
     /**
      * @param \App\Managers\Contracts\CarManager $cars
      * @param \App\Managers\Contracts\UserManager $users
+     * @param \App\Managers\Contracts\LocationManager $locations
      */
-    public function __construct(CarManager $cars, UserManager $users)
-    {
+    public function __construct(
+        CarManager $cars,
+        UserManager $users,
+        LocationManager $locations
+    ) {
         $this->cars = $cars;
         $this->users = $users;
+        $this->locations = $locations;
 
         $this->middleware('auth');
         $this->middleware('can:cars.create')->only(['create', 'store']);
@@ -168,5 +177,26 @@ class CarController extends Controller
         $this->cars->delete($id);
 
         return redirect()->route('cars.index');
+    }
+
+    public function rent(int $id)
+    {
+        $car = $this->cars->find($id);
+        $locations = $this->locations->findAll();
+
+        return view('cars.rent', [
+            'car' => $car,
+            'locations' => $locations,
+        ]);
+    }
+
+    public function storeRent()
+    {
+        return 'storeRent';
+    }
+
+    public function returnFromRent()
+    {
+        return 'returnFromRent';
     }
 }

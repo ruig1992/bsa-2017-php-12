@@ -18,7 +18,7 @@
       integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
       crossorigin="anonymous">
 
-    <style>.noselect{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.btn:focus{background-color:transparent}.btn-primary:focus{color:#0275d8}a.btn-success:focus{color:#5cb85c}a.btn-danger:focus{color:#d9534f}.main-wrapper{padding-bottom:5rem}.navbar-brand{font-weight:500}.cars-cards{margin-top:-1rem}.form-control-label,.car-field{font-weight:600}.form-control-feedback{font-size:.9em}
+    <style>.noselect{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.btn:focus{background-color:transparent}.btn-primary:focus{color:#0275d8}a.btn-success:focus{color:#5cb85c}a.btn-danger:focus{color:#d9534f}.main-wrapper{padding-bottom:5rem}.navbar-brand{font-weight:500}.cars-cards{margin-top:-1rem}.form-control-label,.car-field{font-weight:600}.form-control-feedback{font-size:.9em}.car-card .cart-footer{padding: .75rem 1.25rem;border-top:1px dashed #ccc}
     </style>
   </head>
 
@@ -86,7 +86,7 @@
         </div>
       </nav>
 
-      <div class="container p-4">
+      <div class="container px-2 py-4 p-sm-4">
         @yield('content')
       </div>
     </div>
