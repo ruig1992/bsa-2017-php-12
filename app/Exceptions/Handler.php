@@ -54,6 +54,12 @@ class Handler extends ExceptionHandler
         // If expects JSON - for API calls
         if ($request->expectsJson()) {
 
+            if ($exception instanceof RentalException) {
+                return response()->json([
+                    'error' => $exception->getMessage(),
+                ], $exception->getCode());
+            }
+
             if ($exception instanceof AuthorizationException) {
                 return response()->json([
                     'error' => $exception->getMessage(),
@@ -64,12 +70,6 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'error' => "The {$exception->getModel()} not found",
                 ], 404);
-            }
-
-            if ($exception instanceof RentalException) {
-                return response()->json([
-                    'error' => $exception->getMessage(),
-                ], $exception->getCode());
             }
 
             if ($exception instanceof RelationNotFoundException) {

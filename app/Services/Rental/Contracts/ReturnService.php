@@ -12,10 +12,11 @@ interface ReturnService
      *
      * @param int $userId
      * @param int $carId
+     * @param array $properties
      *
      * @return bool
      */
-    public function returnFromRent(int $userId, int $carId): bool;
+    public function returnFromRent(int $userId, int $carId, array $properties): bool;
 
     /**
      * Validates the input parameters.

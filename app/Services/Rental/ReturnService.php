@@ -16,10 +16,10 @@ class ReturnService implements ReturnServiceContract
     /**
      * @inheritdoc
      */
-    public function returnFromRent(int $userId, int $carId): bool
+    public function returnFromRent(int $userId, int $carId, array $properties): bool
     {
-        return $this->validate($userId, $carId)
-            ->returnCar();
+        return $this->setUserAndCar($userId, $carId)
+            ->returnCar($properties);
     }
 
     /**
@@ -35,12 +35,15 @@ class ReturnService implements ReturnServiceContract
     /**
      * Return the car from rent.
      *
+     * @param array $properties
      * @return bool
      */
-    private function returnCar(): bool
+    private function returnCar(array $properties): bool
     {
-        return $this->rental->update([
-            'returned_at' => Carbon::now()->toDateTimeString(),
-        ]);
+        $properties['returned_at'] = Carbon::now()->toDateTimeString();
+
+        return $this->rentals
+            ->getActiveRentalByCar($this->carId)
+            ->update($properties);
     }
 }

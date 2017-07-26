@@ -4,10 +4,10 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class StoreCarRental
+ * Class StoreCarReturn
  * @package App\Http\Requests
  */
-class StoreCarRental extends FormRequest
+class StoreCarReturn extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class StoreCarRental extends FormRequest
     public function rules(): array
     {
         return [
-            'rented_from' => 'bail|required|integer|exists:locations,id',
+            'returned_to' => 'bail|required|integer|exists:locations,id',
         ];
     }
 
@@ -39,9 +39,9 @@ class StoreCarRental extends FormRequest
     public function messages(): array
     {
         return [
-            'rented_from.required' => 'The location must be selected.',
-            'rented_from.integer' => 'The selected location has an invalid type.',
-            'rented_from.exists' => 'The selected location does not exist.',
+            'returned_to.required' => 'The location must be selected.',
+            'returned_to.integer' => 'The selected location has an invalid type.',
+            'returned_to.exists' => 'The selected location does not exist.',
         ];
     }
 }

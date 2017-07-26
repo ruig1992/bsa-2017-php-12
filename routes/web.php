@@ -18,6 +18,7 @@ Route::get('/', 'HomeController@index')->name('app.index');
 Route::resource('cars', 'CarController');
 
 Route::get('cars/{id}/rent', 'CarRentalController@create')->name('cars.rent');
+Route::get('cars/{id}/return', 'CarRentalController@edit')->name('cars.return');
 Route::post('cars/{id}/rent', 'CarRentalController@rentCar')->name('cars.rent.store');
 Route::post('cars/{id}/return', 'CarRentalController@returnCar')->name('cars.rent.return');
 

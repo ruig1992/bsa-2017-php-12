@@ -12,7 +12,6 @@ use App\Services\Rental\Exceptions\{
     User\UserNotFound,
     Car\CarAlreadyRented
 };
-use App\Managers\Eloquent\Criteria\WhereIsOrNotNull;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -45,10 +44,6 @@ trait RentalBase
      * @var int
      */
     private $carId;
-    /**
-     * @var \App\Entity\Rental
-     */
-    private $rental;
 
     /**
      * @param \App\Managers\Contracts\UserManager $users
@@ -65,6 +60,22 @@ trait RentalBase
         $this->rentals = $rentals;
 
         $this->price = env('RENTAL_PRICE');
+    }
+
+    /**
+     * Sets the current user and the car for rental actions.
+     *
+     * @param int $userId
+     * @param int $carId
+     *
+     * @return $this
+     */
+    private function setUserAndCar(int $userId, int $carId): self
+    {
+        $this->userId = $userId;
+        $this->carId = $carId;
+
+        return $this;
     }
 
     /**
@@ -106,7 +117,7 @@ trait RentalBase
     /**
      * Checks, is the car has already rented.
      *
-     * @param  bool $rentedFalse  If true, throws exception
+     * @param  bool $rentedFalse
      *
      * @return $this
      * @throws \App\Services\Rental\Exceptions\Car\CarAlreadyRented|
@@ -114,24 +125,20 @@ trait RentalBase
      */
     private function isCarRented(bool $rentedFalse = false): self
     {
-        try {
-            $this->rental = $this->rentals
-                ->withCriteria([new WhereIsOrNotNull('returned_at')])
-                ->findWhereFirst([
-                    ['car_id', $this->carId],
-                ]);
+        $rental = $this->rentals->getActiveRentalByCar($this->carId);
 
-            if ($rentedFalse === true) {
-                throw new CarAlreadyRented($this->carId);
-            }
-            if ($this->rental->user_id !== $this->userId) {
-                throw new CarNotRented($this->carId, $this->userId);
-            }
-
-        } catch (ModelNotFoundException $e) {
+        if ($rental === null) {
             if ($rentedFalse === false) {
                 throw new CarNotRented($this->carId);
             }
+            return $this;
+        }
+
+        if ($rentedFalse === true) {
+            throw new CarAlreadyRented($this->carId);
+        }
+        if ($rental->user_id !== $this->userId) {
+            throw new CarNotRented($this->carId, $this->userId);
         }
 
         return $this;

@@ -75,12 +75,9 @@
       @endcan
 
       @can('cars.rent.return', [$car['id'], true])
-      <button type="submit" class="btn btn-warning rent-return-button" form="rent-return-form">
-      <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i> Return from Rent</button>
-
-      <form id="rent-return-form" action="{{ route('cars.rent.return', ['id' => $car['id']]) }}"
-        method="POST" style="display:none">
-          {{ csrf_field() }}</form>
+      <a href="{{ route('cars.return', ['id' => $car['id']]) }}"
+        class="btn btn-warning rent-return-button">
+          <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i> Return from Rent</a>
       @endcan
     </div>
   @endif

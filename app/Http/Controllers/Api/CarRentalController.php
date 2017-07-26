@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreCarRental;
 use App\Managers\Contracts\CarManager;
+use App\Http\Requests\{StoreCarRental, StoreCarReturn};
 use App\Services\Rental\Contracts\{RentalService, ReturnService};
 
 /**
@@ -53,8 +53,10 @@ class CarRentalController extends Controller
      */
     public function rentCar(StoreCarRental $request, int $carId): JsonResponse
     {
+        $this->authorize('cars.rent.store', $carId);
+
         $this->rentalService->rent(Auth::user()->id, $carId, $request->only([
-            'rented_from', 'returned_to'
+            'rented_from',
         ]));
 
         return response()->json([
@@ -65,13 +67,19 @@ class CarRentalController extends Controller
     /**
      * Returns the car from a rent.
      *
+     * @param \App\Http\Requests\StoreCarReturn $request
+     *    Contains the rules for validating the car return from rent data from form request
      * @param int $carId
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function returnCar(int $carId): JsonResponse
+    public function returnCar(StoreCarReturn $request, int $carId): JsonResponse
     {
-        $this->returnService->returnFromRent(Auth::user()->id, $carId);
+        $this->authorize('cars.rent.return', $carId);
+
+        $this->returnService->returnFromRent(Auth::user()->id, $carId, $request->only([
+            'returned_to',
+        ]));
 
         return response()->json([
             'success' => 'The car returned from a rent successfully!',

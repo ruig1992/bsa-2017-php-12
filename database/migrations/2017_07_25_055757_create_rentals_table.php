@@ -21,7 +21,7 @@ class CreateRentalsTable extends Migration
             $table->integer('user_id')->unsigned()->index();
 
             $table->integer('rented_from')->unsigned()->index();
-            $table->integer('returned_to')->unsigned()->index();
+            $table->integer('returned_to')->unsigned()->nullable()->index();
 
             $table->dateTime('rented_at')
                 ->default(DB::raw('CURRENT_TIMESTAMP'));

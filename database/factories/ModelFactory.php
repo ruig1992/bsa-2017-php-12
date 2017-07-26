@@ -42,3 +42,10 @@ $factory->define(App\Entity\Location::class, function (Faker\Generator $faker) {
         'name' => $faker->address,
     ];
 });
+
+$factory->define(App\Entity\Rental::class, function (Faker\Generator $faker) {
+    return [
+        'returned_at' => null,
+        'price' => env('RENTAL_PRICE'),
+    ];
+});

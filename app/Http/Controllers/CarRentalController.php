@@ -2,9 +2,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use App\Http\Requests\StoreCarRental;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\{StoreCarRental, StoreCarReturn};
 use App\Managers\Contracts\{CarManager, LocationManager};
 use App\Services\Rental\Contracts\{RentalService, ReturnService};
 
@@ -65,7 +64,7 @@ class CarRentalController extends Controller
         $car = $this->cars->find($carId);
         $locations = $this->locations->findAll();
 
-        return view('cars.rent', [
+        return view('cars.rental.rent', [
             'car' => $car->toArray(),
             'locations' => $locations->toArray(),
         ]);
@@ -85,24 +84,48 @@ class CarRentalController extends Controller
         $this->authorize('cars.rent.store', $carId);
 
         $this->rentalService->rent(Auth::user()->id, $carId, $request->only([
-            'rented_from', 'returned_to'
+            'rented_from',
         ]));
 
         return redirect()->route('cars.show', ['id' => $carId]);
     }
 
     /**
+     * Shows the form for the car return from rent by car id.
+     *
+     * @param int $carId
+     *
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function edit(int $carId)
+    {
+        $this->authorize('cars.rent.return', $carId);
+
+        $car = $this->cars->find($carId);
+        $locations = $this->locations->findAll();
+
+        return view('cars.rental.return', [
+            'car' => $car->toArray(),
+            'locations' => $locations->toArray(),
+        ]);
+    }
+
+    /**
      * Returns the car from a rent.
      *
+     * @param \App\Http\Requests\StoreCarReturn $request
+     *    Contains the rules for validating the car return from rent data from form request
      * @param int $carId
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function returnCar(int $carId): RedirectResponse
+    public function returnCar(StoreCarReturn $request, int $carId): RedirectResponse
     {
         $this->authorize('cars.rent.return', $carId);
 
-        $this->returnService->returnFromRent(Auth::user()->id, $carId);
+        $this->returnService->returnFromRent(Auth::user()->id, $carId, $request->only([
+            'returned_to',
+        ]));
 
         return redirect()->route('cars.index');
     }
