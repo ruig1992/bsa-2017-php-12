@@ -81,8 +81,6 @@ class CarRentalController extends Controller
      */
     public function rentCar(StoreCarRental $request, int $carId): RedirectResponse
     {
-        $this->authorize('cars.rent.store', $carId);
-
         $this->rentalService->rent(Auth::user()->id, $carId, $request->only([
             'rented_from',
         ]));
@@ -121,8 +119,6 @@ class CarRentalController extends Controller
      */
     public function returnCar(StoreCarReturn $request, int $carId): RedirectResponse
     {
-        $this->authorize('cars.rent.return', $carId);
-
         $this->returnService->returnFromRent(Auth::user()->id, $carId, $request->only([
             'returned_to',
         ]));

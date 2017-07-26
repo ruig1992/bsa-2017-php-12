@@ -33,10 +33,6 @@ trait RentalBase
      */
     private $rentals;
     /**
-     * @var float
-     */
-    private $price;
-    /**
      * @var int
      */
     private $userId;
@@ -58,8 +54,6 @@ trait RentalBase
         $this->users = $users;
         $this->cars = $cars;
         $this->rentals = $rentals;
-
-        $this->price = env('RENTAL_PRICE');
     }
 
     /**

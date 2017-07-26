@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\Rental\Contracts;
 
+use App\Entity\Rental;
+
 /**
  * Interface ReturnService
  * @package App\Services\Rental\Contracts
@@ -14,9 +16,9 @@ interface ReturnService
      * @param int $carId
      * @param array $properties
      *
-     * @return bool
+     * @return \App\Entity\Rental
      */
-    public function returnFromRent(int $userId, int $carId, array $properties): bool;
+    public function returnFromRent(int $userId, int $carId, array $properties): Rental;
 
     /**
      * Validates the input parameters.

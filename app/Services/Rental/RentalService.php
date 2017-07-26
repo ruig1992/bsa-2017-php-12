@@ -2,6 +2,7 @@
 namespace App\Services\Rental;
 
 use Carbon\Carbon;
+use App\Entity\Rental;
 use App\Services\Rental\{
     Traits\RentalBase,
     Contracts\RentalService as RentalServiceContract
@@ -16,12 +17,14 @@ class RentalService implements RentalServiceContract
 {
     use RentalBase;
 
+    const RENTAL_PRICE = 120.50;
+
     /**
      * @inheritdoc
      */
-    public function rent(int $userId, int $carId, array $properties): bool
+    public function rent(int $userId, int $carId, array $properties): Rental
     {
-        return $this->setUserAndCar($userId, $carId)
+        return $this->validate($userId, $carId)
             ->rentCar($properties);
     }
 
@@ -56,15 +59,15 @@ class RentalService implements RentalServiceContract
      * Creates the car rental for the current user.
      *
      * @param array $properties
-     * @return bool
+     * @return \App\Entity\Rental
      */
-    private function rentCar(array $properties): bool
+    private function rentCar(array $properties): Rental
     {
         $properties['user_id'] = $this->userId;
         $properties['car_id'] = $this->carId;
-        $properties['price'] = $this->price;
+        $properties['price'] = self::RENTAL_PRICE;
         $properties['rented_at'] = Carbon::now()->toDateTimeString();
 
-        return $this->rentals->create($properties) !== null;
+        return $this->rentals->create($properties);
     }
 }

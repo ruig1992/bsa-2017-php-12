@@ -16,6 +16,20 @@
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
+
+        <testsuite name="rental_service">
+            <file>./tests/Unit/RentalServiceTest.php</file>
+        </testsuite>
+
+        <testsuite name="return_service">
+            <file>./tests/Unit/ReturnServiceTest.php</file>
+        </testsuite>
+
+        <testsuite name="rentalreturn_api">
+            <file>./tests/Feature/RentalApiTest.php</file>
+            <file>./tests/Feature/ReturnApiTest.php</file>
+        </testsuite>
+
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

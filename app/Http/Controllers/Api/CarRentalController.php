@@ -53,15 +53,13 @@ class CarRentalController extends Controller
      */
     public function rentCar(StoreCarRental $request, int $carId): JsonResponse
     {
-        $this->authorize('cars.rent.store', $carId);
+        $rental = $this->rentalService->rent(
+            Auth::user()->id,
+            $carId,
+            $request->only(['rented_from',])
+        );
 
-        $this->rentalService->rent(Auth::user()->id, $carId, $request->only([
-            'rented_from',
-        ]));
-
-        return response()->json([
-            'success' => 'The car rented successfully!',
-        ]);
+        return response()->json($rental);
     }
 
     /**
@@ -75,14 +73,12 @@ class CarRentalController extends Controller
      */
     public function returnCar(StoreCarReturn $request, int $carId): JsonResponse
     {
-        $this->authorize('cars.rent.return', $carId);
+        $rental = $this->returnService->returnFromRent(
+            Auth::user()->id,
+            $carId,
+            $request->only(['returned_to',])
+        );
 
-        $this->returnService->returnFromRent(Auth::user()->id, $carId, $request->only([
-            'returned_to',
-        ]));
-
-        return response()->json([
-            'success' => 'The car returned from a rent successfully!',
-        ]);
-    }
+        return response()->json($rental);
+     }
 }

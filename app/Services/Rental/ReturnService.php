@@ -2,8 +2,11 @@
 namespace App\Services\Rental;
 
 use Carbon\Carbon;
-use App\Services\Rental\Traits\RentalBase;
-use App\Services\Rental\Contracts\ReturnService as ReturnServiceContract;
+use App\Entity\Rental;
+use App\Services\Rental\{
+    Traits\RentalBase,
+    Contracts\ReturnService as ReturnServiceContract
+};
 
 /**
  * Class ReturnService
@@ -16,9 +19,9 @@ class ReturnService implements ReturnServiceContract
     /**
      * @inheritdoc
      */
-    public function returnFromRent(int $userId, int $carId, array $properties): bool
+    public function returnFromRent(int $userId, int $carId, array $properties): Rental
     {
-        return $this->setUserAndCar($userId, $carId)
+        return $this->validate($userId, $carId)
             ->returnCar($properties);
     }
 
@@ -36,14 +39,18 @@ class ReturnService implements ReturnServiceContract
      * Return the car from rent.
      *
      * @param array $properties
-     * @return bool
+     * @return \App\Entity\Rental
      */
-    private function returnCar(array $properties): bool
+    private function returnCar(array $properties): Rental
     {
         $properties['returned_at'] = Carbon::now()->toDateTimeString();
 
-        return $this->rentals
+        $rental = $this->rentals
             ->getActiveRentalByCar($this->carId)
-            ->update($properties);
+            ->fill($properties);
+
+        $rental->save();
+
+        return $rental;
     }
 }
