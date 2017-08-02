@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCar;
 use Illuminate\Http\RedirectResponse;
 use App\Managers\Eloquent\Criteria\Latest;
-use App\Traits\Jobs\DispatchCarStoredNotification;
 use App\Managers\Contracts\{CarManager, UserManager};
 
 /**
@@ -13,8 +12,6 @@ use App\Managers\Contracts\{CarManager, UserManager};
  */
 class CarController extends Controller
 {
-    use DispatchCarStoredNotification;
-
     /**
      * @var \App\Managers\Contracts\CarManager
      */
@@ -68,7 +65,7 @@ class CarController extends Controller
      *
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function create(): RedirectResponse
+    public function create()
     {
         $users = $this->users->findAllForForm();
 
@@ -95,7 +92,7 @@ class CarController extends Controller
             'user_id',
         ]));
 
-        $this->carStoredNotification($car);
+        $this->cars->carStoredNotification($car);
 
         return redirect()->route('cars.index');
     }
